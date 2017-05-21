@@ -17,6 +17,7 @@ let lastRxBytes = -1;
 let lastRxPackets = -1;
 let lastTxBytes = -1;
 let lastTxPackets = -1;
+let lastTime = -1;
 
 function getTraffics() {
     
@@ -39,19 +40,25 @@ function getTraffics() {
         lastRxPackets = rxPackets;
         lastTxBytes = txBytes;
         lastTxPackets = txPackets;
+        lastTime = Date.now();
+
+        return [0, 0, 0, 0];
     }
 
+    const elapsedSec = (Date.now() - lastTime) / 1000;
+
     const ret = [
-        rxBytes - lastRxBytes,
-        rxPackets - lastRxPackets,
-        txBytes - lastTxBytes,
-        txPackets - lastTxPackets
+        (rxBytes - lastRxBytes) * 8 / elapsedSec, // bps
+        (rxPackets - lastRxPackets) / elapsedSec, // pps
+        (txBytes - lastTxBytes) * 8 / elapsedSec,
+        (txPackets - lastTxPackets) / elapsedSec
     ];
 
     lastRxBytes = rxBytes;
     lastRxPackets = rxPackets;
     lastTxBytes = txBytes;
     lastTxPackets = txPackets;
+    lastTime = Date.now();
 
     return ret;
 }
@@ -75,13 +82,13 @@ class NetworkMonitor extends Monitor {
         socketStatisticsUtil
             .getTcpStateCounts()
             .then(tcpStateCounts => {
-                const [rxBytes, rxPackets, txBytes, txPackets] = getTraffics();
+                const [rxBPS, rxPPS, txBPS, txPPS] = getTraffics();
                 this.setStatistics([
                     ..._.pairs(tcpStateCounts),
-                    ["eth0.rx.bytes", rxBytes],
-                    ["eth0.rx.packets", rxPackets],
-                    ["eth0.tx.bytes", txBytes],
-                    ["eth0.tx.packets", txPackets]
+                    ["eth0.rx.bps", rxBPS],
+                    ["eth0.rx.pps", rxPPS],
+                    ["eth0.tx.bps", txBPS],
+                    ["eth0.tx.pps", txPPS]
                 ]);
             })
             .catchConsoleError();
