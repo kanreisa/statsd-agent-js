@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "statsd-agent",
+      "script": "src/app.js",
+      "node_args" : "--max_old_space_size=64",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

@@ -3,6 +3,8 @@
 require('console-stamp')(console, {pattern: "dd HH:MM:ss.l"});
 require('./utils/bluebird-extensions');
 
+process.title = 'statsd-agent';
+
 const config = require('./config');
 
 const debug = require('debug')('statsd-agent');
