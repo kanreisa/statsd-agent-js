@@ -1,6 +1,5 @@
 'use strict';
 
-const childProcess = require('child_process');
 const fs = require("fs");
 const _ = require('underscore');
 const netstat = require('node-netstat');
