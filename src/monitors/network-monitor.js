@@ -48,10 +48,10 @@ function getTraffics() {
     const elapsedSec = (Date.now() - lastTime) / 1000;
 
     const ret = [
-        (rxBytes - lastRxBytes) * 8 / elapsedSec, // bps
-        (rxPackets - lastRxPackets) / elapsedSec, // pps
-        (txBytes - lastTxBytes) * 8 / elapsedSec,
-        (txPackets - lastTxPackets) / elapsedSec
+        Math.round((rxBytes - lastRxBytes) * 8 / elapsedSec), // bps
+        Math.round((rxPackets - lastRxPackets) / elapsedSec), // pps
+        Math.round((txBytes - lastTxBytes) * 8 / elapsedSec),
+        Math.round((txPackets - lastTxPackets) / elapsedSec)
     ];
 
     lastRxBytes = rxBytes;
