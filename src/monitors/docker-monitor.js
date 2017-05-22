@@ -14,9 +14,9 @@ class DockerMonitor extends Monitor {
     collect() {
         const ps = childProcess.execSync("docker ps -q", {
             encoding: "utf8"
-        });
+        }).trim();
 
-        const count = ps.trim().split("\n").length;
+        const count = ps === "" ? 0 : ps.split("\n").length;
 
         const stateCounts = {
             count: count
