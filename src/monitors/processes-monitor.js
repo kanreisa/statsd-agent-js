@@ -32,7 +32,15 @@ function getStateCounts() {
 
         proc.on('error', reject);
 
-        const stateCounts = {};
+        const stateCounts = {
+            uninterruptible: 0,
+            runnable: 0,
+            sleeping: 0,
+            stopped: 0,
+            paging: 0,
+            dead: 0,
+            zombie: 0
+        };
 
         const lineReader = readline.createInterface({
             input: proc.stdout
@@ -46,7 +54,7 @@ function getStateCounts() {
             const code = matches[1];
             const status = statusCodeTable[code];
 
-            stateCounts[status] = (stateCounts[status] || 0) + 1;
+            ++stateCounts[status];
         });
 
         proc.stdout.on('close', () => {
