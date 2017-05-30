@@ -1,8 +1,7 @@
 'use strict';
 
 const Promise = require('bluebird');
-const drivelist = Promise.promisifyAll(require('drivelist'));
-const diskusage = Promise.promisifyAll(require('diskusage'));
+const diskusage = require('diskusage');
 
 const Monitor = require('./objects/monitor');
 
@@ -12,43 +11,22 @@ class DiskMonitor extends Monitor {
     }
 
     collect() {
-        drivelist
-            .listAsync()
-            .map(device => {
-                const deviceMountPath = device.mountpoints && device.mountpoints[0] && device.mountpoints[0].path;
+        const diskInfo = diskusage.checkSync("/");
 
-                if (deviceMountPath == null)
-                    return;
+        const diskStatistics = [
+            [`free`, deviceInfo.available],
+            [`total`, deviceInfo.total]
+        ];
 
-                return diskusage
-                    .checkAsync(deviceMountPath)
-                    .then(deviceInfo => {
-                        const deviceMountPathStatsdName = deviceMountPath.replace(':', '');
+        const allStatistics = [];
 
-                        return [
-                            [`${deviceMountPathStatsdName}.free`, deviceInfo.free],
-                            [`${deviceMountPathStatsdName}.total`, deviceInfo.total],
-                            [`${deviceMountPathStatsdName}.used`, deviceInfo.total - deviceInfo.free]
-                        ];
-                    })
-                    .catch(err => {
-                        console.error(err.stack || err);
+        for (let i = 0; i < diskStatisticsList.length; i++) {
+            const diskStatistics = diskStatisticsList[i];
 
-                        return [];
-                    });
-            })
-            .then(diskStatisticsList => {
-                const allStatistics = [];
+            Array.prototype.push.apply(allStatistics, diskStatistics);
+        }
 
-                for (let i = 0; i < diskStatisticsList.length; i++) {
-                    const diskStatistics = diskStatisticsList[i];
-
-                    Array.prototype.push.apply(allStatistics, diskStatistics);
-                }
-
-                this.setStatistics(allStatistics);
-            })
-            .catchConsoleError();
+        this.setStatistics(allStatistics);
     }
 }
 
