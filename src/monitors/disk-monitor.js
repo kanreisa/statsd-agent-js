@@ -18,15 +18,7 @@ class DiskMonitor extends Monitor {
             [`total`, diskInfo.total]
         ];
 
-        const allStatistics = [];
-
-        for (let i = 0; i < diskStatisticsList.length; i++) {
-            const diskStatistics = diskStatisticsList[i];
-
-            Array.prototype.push.apply(allStatistics, diskStatistics);
-        }
-
-        this.setStatistics(allStatistics);
+        this.setStatistics(diskStatistics);
     }
 }
 
