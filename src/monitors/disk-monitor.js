@@ -14,8 +14,8 @@ class DiskMonitor extends Monitor {
         const diskInfo = diskusage.checkSync("/");
 
         const diskStatistics = [
-            [`free`, deviceInfo.available],
-            [`total`, deviceInfo.total]
+            [`free`, diskInfo.available],
+            [`total`, diskInfo.total]
         ];
 
         const allStatistics = [];
